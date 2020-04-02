@@ -1,9 +1,12 @@
 const express = require('express')
+const bodyParser = require('body-parser');
 const app = express()
 const port = process.env.PORT || 3000
 
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
 app.post('/slack/calculate', (req, res) => {
-    console.log(JSON.stringify(req.query))
     console.log(JSON.stringify(req.body))
     res.send('')
 })
