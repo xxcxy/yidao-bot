@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/slack/calculate', (req, res) => {
     console.log(JSON.stringify(req.body))
-    res.send(Parser.evaluate(req.body.text))
+    res.send(Parser.evaluate(req.body.text).toString())
 })
 
 app.listen(port, () => console.log(`Example app listening at ${port}`))
