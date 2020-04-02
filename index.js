@@ -20,7 +20,7 @@ app.post('/slack/trans-to-en', (req, res) => {
   const resUrl = req.body.response_url
   res.send('')
   translate.translate(text, 'en')
-    .then(enText => axios.post(resUrl, { text: enText }))
+    .then(enText => axios.post(resUrl, { text: enText[0] }))
     .catch(err => console.error(err))
 })
 
