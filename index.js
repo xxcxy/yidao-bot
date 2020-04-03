@@ -30,13 +30,7 @@ app.get('/slack/auth', (req, res) => {
 })
 
 app.get('/slack/auth/redirect', (req, res) => {
-  const requestBody = {
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    redirect_uri: 'https://yidao-bot.herokuapp.com/slack/auth/redirect',
-    code: req.query.code
-  }
-  axios.post('https://slack.com/api/oauth.access', qs.stringify(requestBody))
+  axios.post('https://slack.com/api/oauth.v2.access', qs.stringify({ code: req.query.code }), { auth: { username: process.env.CLIENT_ID, password: process.env.CLIENT_SECRET } })
     .then(response => {
       if (response.data.ok) {
         res.send('Success!')
