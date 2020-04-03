@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const Parser = require('expr-eval').Parser
 const { Translate } = require('@google-cloud/translate').v2
 const axios = require('axios')
+const qs = require('qs')
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -29,16 +30,24 @@ app.get('/slack/auth', (req, res) => {
 })
 
 app.get('/slack/auth/redirect', (req, res) => {
-  const resUrl = `https://slack.com/api/oauth.access?code=${req.query.code}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&redirect_uri=${process.env.REDIRECT_URI}`
-  axios.get(resUrl)
-    .then(res => {
-      if (res.data.ok) {
+  const requestBody = {
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    redirect_uri: 'https://yidao-bot.herokuapp.com/slack/auth/redirect',
+    code: req.query.code
+  }
+  axios.post('https://slack.com/api/oauth.access', qs.stringify(requestBody))
+    .then(response => {
+      if (response.data.ok) {
         res.send('Success!')
       } else {
-        res.send('Error encountered: \n' + JSON.stringify(res.data)).status(200).end()
+        res.send('Error encountered: \n' + JSON.stringify(response.data)).status(200).end()
       }
     })
-    .catch(() => res.send('Error').status(500).end())
+    .catch(err => {
+      console.error(err)
+      res.send('Error').status(500).end()
+    })
 })
 
 app.listen(port, () => console.log(`Example app listening at ${port}`))
