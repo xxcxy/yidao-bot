@@ -24,4 +24,21 @@ app.post('/slack/trans-to-en', (req, res) => {
     .catch(err => console.error(err))
 })
 
+app.get('/slack/auth', (req, res) => {
+  res.sendFile('add_to_slack.html')
+})
+
+app.get('/slack/auth/redirect', (req, res) => {
+  const resUrl = `https://slack.com/api/oauth.access?code=${req.query.code}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&redirect_uri=${process.env.REDIRECT_URI}`
+  axios.get(resUrl)
+    .then(res => {
+      if (res.data.ok) {
+        res.send('Success!')
+      } else {
+        res.send('Error encountered: \n' + JSON.stringify(res.data)).status(200).end()
+      }
+    })
+    .catch(() => res.send('Error').status(500).end())
+})
+
 app.listen(port, () => console.log(`Example app listening at ${port}`))
